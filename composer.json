@@ -1,12 +1,12 @@
 {
-    "name": "macusaone/oauth2canva",
+    "name": "keith-vo-macusa/oauth2canva",
     "description": "This is my package oauth2canva",
     "keywords": [
         "mac-oauth2-canva",
         "laravel",
         "oauth2canva"
     ],
-    "homepage": "https://github.com/mac/oauth2canva",
+    "homepage": "https://github.com/keith-vo-macusa/oauth2canva",
     "license": "MIT",
     "authors": [
         {
