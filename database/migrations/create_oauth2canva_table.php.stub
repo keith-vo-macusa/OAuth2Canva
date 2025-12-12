@@ -8,11 +8,15 @@ return new class extends Migration
 {
     public function up()
     {
-        Schema::create('oauth2canva_table', function (Blueprint $table) {
+        Schema::create('oauth2canva_tokens', function (Blueprint $table) {
             $table->id();
-
-            // add fields
-
+            $table->string('user_id')->nullable()->index(); // ID của user trong hệ thống của bạn
+            $table->text('access_token');
+            $table->text('refresh_token')->nullable();
+            $table->timestamp('expires_at')->nullable();
+            $table->text('scopes')->nullable(); // Lưu scopes đã được authorize
+            $table->string('state')->nullable()->index(); // State để verify CSRF
+            $table->text('code_verifier')->nullable(); // PKCE code verifier
             $table->timestamps();
         });
     }
