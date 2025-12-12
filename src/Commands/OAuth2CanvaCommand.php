@@ -1,12 +1,12 @@
 <?php
 
-namespace VendorName\Skeleton\Commands;
+namespace Macoauth2canva\OAuth2Canva\Commands;
 
 use Illuminate\Console\Command;
 
-class SkeletonCommand extends Command
+class OAuth2CanvaCommand extends Command
 {
-    public $signature = 'skeleton';
+    public $signature = 'oauth2canva';
 
     public $description = 'My command';
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace VendorName\Skeleton\Database\Factories;
+namespace Macoauth2canva\OAuth2Canva\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 

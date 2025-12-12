@@ -1,17 +1,17 @@
 {
-    "name": ":vendor_slug/:package_slug",
-    "description": ":package_description",
+    "name": "mac/oauth2canva",
+    "description": "This is my package oauth2canva",
     "keywords": [
-        ":vendor_name",
+        "mac-oauth2-canva",
         "laravel",
-        ":package_slug"
+        "oauth2canva"
     ],
-    "homepage": "https://github.com/:vendor_slug/:package_slug",
+    "homepage": "https://github.com/mac/oauth2canva",
     "license": "MIT",
     "authors": [
         {
-            "name": ":author_name",
-            "email": "author@domain.com",
+            "name": "keith-vo-macusa",
+            "email": "keith.vo@macusaone.com",
             "role": "Developer"
         }
     ],
@@ -35,13 +35,13 @@
     },
     "autoload": {
         "psr-4": {
-            "VendorName\\Skeleton\\": "src/",
-            "VendorName\\Skeleton\\Database\\Factories\\": "database/factories/"
+            "Macoauth2canva\\OAuth2Canva\\": "src/",
+            "Macoauth2canva\\OAuth2Canva\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "VendorName\\Skeleton\\Tests\\": "tests/",
+            "Macoauth2canva\\OAuth2Canva\\Tests\\": "tests/",
             "Workbench\\App\\": "workbench/app/"
         }
     },
@@ -63,10 +63,10 @@
     "extra": {
         "laravel": {
             "providers": [
-                "VendorName\\Skeleton\\SkeletonServiceProvider"
+                "Macoauth2canva\\OAuth2Canva\\OAuth2CanvaServiceProvider"
             ],
             "aliases": {
-                "Skeleton": "VendorName\\Skeleton\\Facades\\Skeleton"
+                "OAuth2Canva": "Macoauth2canva\\OAuth2Canva\\Facades\\OAuth2Canva"
             }
         }
     },
