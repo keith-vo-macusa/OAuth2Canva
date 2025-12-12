@@ -2,10 +2,9 @@
 
 namespace Macoauth2canva\OAuth2Canva;
 
-use Illuminate\Support\Facades\App;
+use Macoauth2canva\OAuth2Canva\Commands\OAuth2CanvaCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use Macoauth2canva\OAuth2Canva\Commands\OAuth2CanvaCommand;
 
 class OAuth2CanvaServiceProvider extends PackageServiceProvider
 {
@@ -28,7 +27,7 @@ class OAuth2CanvaServiceProvider extends PackageServiceProvider
     {
         // Đăng ký OAuth2Canva như một singleton để Facade hoạt động
         $this->app->singleton(OAuth2Canva::class, function ($app) {
-            return new OAuth2Canva();
+            return new OAuth2Canva;
         });
     }
 }
