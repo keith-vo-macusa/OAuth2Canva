@@ -40,4 +40,3 @@ class PKCE
         return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
     }
 }
-

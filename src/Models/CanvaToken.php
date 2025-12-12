@@ -3,8 +3,8 @@
 namespace Macoauth2canva\OAuth2Canva\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Macoauth2canva\OAuth2Canva\OAuth2Canva;
 use Macoauth2canva\OAuth2Canva\Exceptions\TokenRefreshException;
+use Macoauth2canva\OAuth2Canva\OAuth2Canva;
 
 class CanvaToken extends Model
 {
@@ -80,7 +80,6 @@ class CanvaToken extends Model
     /**
      * Lấy access token, tự động refresh nếu cần
      *
-     * @return string|null
      *
      * @throws TokenRefreshException
      */
@@ -96,7 +95,6 @@ class CanvaToken extends Model
     /**
      * Revoke token (xóa token khỏi Canva)
      *
-     * @return bool
      *
      * @throws TokenRefreshException
      */
@@ -117,8 +115,6 @@ class CanvaToken extends Model
 
     /**
      * Kiểm tra token có active không bằng cách introspect
-     *
-     * @return bool
      */
     public function isActive(): bool
     {
@@ -155,4 +151,3 @@ class CanvaToken extends Model
         })->whereNotNull('access_token');
     }
 }
-

@@ -3,8 +3,8 @@
 namespace Macoauth2canva\OAuth2Canva\Tests;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Orchestra\Testbench\TestCase as Orchestra;
 use Macoauth2canva\OAuth2Canva\OAuth2CanvaServiceProvider;
+use Orchestra\Testbench\TestCase as Orchestra;
 
 class TestCase extends Orchestra
 {

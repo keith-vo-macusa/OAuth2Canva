@@ -2,7 +2,6 @@
 
 namespace Macoauth2canva\OAuth2Canva;
 
-use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -224,7 +223,6 @@ class OAuth2Canva
      * Revoke an access token or refresh token
      *
      * @param  string  $token  The access token or refresh token to revoke
-     * @return bool
      *
      * @throws \Exception
      */
