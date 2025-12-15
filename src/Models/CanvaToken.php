@@ -25,7 +25,7 @@ class CanvaToken extends Model
     ];
 
     /**
-     * Kiểm tra xem token có còn hiệu lực không
+     * Check if the token is still valid.
      */
     public function isValid(): bool
     {
@@ -41,7 +41,7 @@ class CanvaToken extends Model
     }
 
     /**
-     * Kiểm tra xem token có cần refresh không
+     * Check if the token needs to be refreshed.
      */
     public function needsRefresh(): bool
     {
@@ -49,14 +49,14 @@ class CanvaToken extends Model
             return false;
         }
 
-        // Refresh nếu còn ít hơn 5 phút
-        return $this->expires_at->subMinutes(5)->isPast();
+        // Refresh if less than 5 minutes left (using copy to avoid modifying the original value)
+        return $this->expires_at->copy()->subMinutes(5)->isPast();
     }
 
     /**
-     * Refresh access token nếu cần thiết
+     * Refresh the access token if needed.
      *
-     * @return bool True nếu đã refresh thành công, false nếu không cần refresh
+     * @return bool True if the refresh was successful, false if not needed
      *
      * @throws TokenRefreshException
      */
@@ -72,29 +72,34 @@ class CanvaToken extends Model
         $this->access_token = $tokenData['access_token'];
         $this->refresh_token = $tokenData['refresh_token'] ?? $this->refresh_token;
         $this->expires_at = now()->addSeconds($tokenData['expires_in']);
-        $this->save();
+
+        if (! $this->save()) {
+            throw new TokenRefreshException('Failed to save refreshed token to database');
+        }
 
         return true;
     }
 
     /**
-     * Lấy access token, tự động refresh nếu cần
-     *
+     * Get a valid access token, auto-refresh if necessary.
      *
      * @throws TokenRefreshException
      */
     public function getValidAccessToken(): ?string
     {
         if (! $this->isValid()) {
-            $this->refreshIfNeeded();
+            // If the token is invalid, try to refresh it
+            if (! $this->refreshIfNeeded()) {
+                // If it cannot be refreshed (no refresh_token or not needed) and it's expired, return null
+                return null;
+            }
         }
 
         return $this->access_token;
     }
 
     /**
-     * Revoke token (xóa token khỏi Canva)
-     *
+     * Revoke the token (remove it from Canva).
      *
      * @throws TokenRefreshException
      */
@@ -114,7 +119,7 @@ class CanvaToken extends Model
     }
 
     /**
-     * Kiểm tra token có active không bằng cách introspect
+     * Check if the token is active using introspection.
      */
     public function isActive(): bool
     {
@@ -133,7 +138,7 @@ class CanvaToken extends Model
     }
 
     /**
-     * Scope query: Tìm token theo user_id
+     * Scope query: Find token by user_id.
      */
     public function scopeForUser($query, string $userId)
     {
@@ -141,7 +146,7 @@ class CanvaToken extends Model
     }
 
     /**
-     * Scope query: Tìm token còn hiệu lực
+     * Scope query: Find valid tokens.
      */
     public function scopeValid($query)
     {
