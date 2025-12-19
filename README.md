@@ -1,55 +1,52 @@
-# This is my package oauth2canva
+# OAuth2Canva
+
+Laravel package for integrating OAuth 2.0 with Canva Connect API. This package provides full support for OAuth 2.0 Authorization Code flow with PKCE (SHA-256) according to Canva's official documentation.
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/mac/oauth2canva.svg?style=flat-square)](https://packagist.org/packages/mac/oauth2canva)
 [![GitHub Tests Action Status](https://img.shields.io/github/actions/workflow/status/mac/oauth2canva/run-tests.yml?branch=main&label=tests&style=flat-square)](https://github.com/mac/oauth2canva/actions?query=workflow%3Arun-tests+branch%3Amain)
 [![GitHub Code Style Action Status](https://img.shields.io/github/actions/workflow/status/mac/oauth2canva/fix-php-code-style-issues.yml?branch=main&label=code%20style&style=flat-square)](https://github.com/mac/oauth2canva/actions?query=workflow%3A"Fix+PHP+code+style+issues"+branch%3Amain)
 [![Total Downloads](https://img.shields.io/packagist/dt/mac/oauth2canva.svg?style=flat-square)](https://packagist.org/packages/mac/oauth2canva)
 
-Package Laravel để tích hợp OAuth2 với Canva Connect API. Package này hỗ trợ đầy đủ OAuth 2.0 Authorization Code flow với PKCE (SHA-256) theo [tài liệu chính thức của Canva](https://www.canva.dev/docs/connect/authentication/).
+## Features
 
-## Tính năng
+- **OAuth 2.0 Authorization Code flow with PKCE** - Full OAuth 2.0 compliance with PKCE (SHA-256) according to Canva standards
+- **Generate authorization URL** - Automatically generate authorization URL with PKCE parameters
+- **Exchange authorization code** - Exchange authorization code for access token and refresh token
+- **Refresh access token** - Automatically refresh token when expired
+- **Introspect token** - Verify token validity on the server
+- **Revoke token** - Revoke token when no longer needed
+- **Helper methods** - Convenient methods for calling Canva API
+- **CanvaToken Model** - Eloquent model for managing tokens with helper methods
+- **Custom Exceptions** - Clear error handling with custom exceptions
+- **Auto-refresh** - Automatically refresh token when about to expire
 
-- ✅ **OAuth 2.0 Authorization Code flow với PKCE** - Tuân thủ đầy đủ OAuth 2.0 với PKCE (SHA-256)
-- ✅ **Generate authorization URL** - Tự động tạo authorization URL với PKCE parameters
-- ✅ **Exchange authorization code** - Đổi authorization code để lấy access token và refresh token
-- ✅ **Refresh access token** - Tự động refresh token khi hết hạn
-- ✅ **Introspect token** - Kiểm tra tính hợp lệ của token trên server
-- ✅ **Revoke token** - Hủy token khi không cần thiết
-- ✅ **Helper methods** - Các method tiện ích để gọi Canva API
-- ✅ **Model CanvaToken** - Model Eloquent để quản lý tokens với các helper methods
-- ✅ **Custom Exceptions** - Xử lý lỗi rõ ràng với custom exceptions
-- ✅ **Auto-refresh** - Tự động refresh token khi sắp hết hạn
+## Requirements
 
-## Support us
-
-[<img src="https://github-ads.s3.eu-central-1.amazonaws.com/OAuth2Canva.jpg?t=1" width="419px" />](https://spatie.be/github-ad-click/OAuth2Canva)
-
-We invest a lot of resources into creating [best in class open source packages](https://spatie.be/open-source). You can support us by [buying one of our paid products](https://spatie.be/open-source/support-us).
-
-We highly appreciate you sending us a postcard from your hometown, mentioning which of our package(s) you are using. You'll find our address on [our contact page](https://spatie.be/about-us). We publish all received postcards on [our virtual postcard wall](https://spatie.be/open-source/postcards).
+- PHP >= 8.2
+- Laravel >= 11.0 or >= 12.0
 
 ## Installation
 
-You can install the package via composer:
+Install the package via Composer:
 
 ```bash
 composer require mac/oauth2canva
 ```
 
-You can publish and run the migrations with:
+Publish and run the migrations:
 
 ```bash
 php artisan vendor:publish --tag="oauth2canva-migrations"
 php artisan migrate
 ```
 
-You can publish the config file with:
+Publish the config file:
 
 ```bash
 php artisan vendor:publish --tag="oauth2canva-config"
 ```
 
-Thêm các biến môi trường vào file `.env`:
+Add the following environment variables to your `.env` file:
 
 ```env
 CANVA_CLIENT_ID=your_client_id
@@ -58,7 +55,7 @@ CANVA_REDIRECT_URI=https://your-app.com/canva/callback
 CANVA_SCOPES=asset:read asset:write design:meta:read
 ```
 
-Nội dung file config:
+The config file (`config/oauth2canva.php`) contents:
 
 ```php
 return [
@@ -72,59 +69,59 @@ return [
 ];
 ```
 
-Optionally, you can publish the views using
+Optionally, you can publish the views using:
 
 ```bash
 php artisan vendor:publish --tag="oauth2canva-views"
 ```
 
-## Tài liệu chi tiết
+## Documentation
 
-Xem [USAGE.md](USAGE.md) để biết hướng dẫn sử dụng chi tiết với các ví dụ đầy đủ.
+See [USAGE.md](USAGE.md) for detailed usage instructions with complete examples.
 
 ## Usage
 
-### Bước 1: Tạo Authorization URL
+### Step 1: Generate Authorization URL
 
 ```php
 use Macoauth2canva\OAuth2Canva\Facades\OAuth2Canva;
 
-// Tạo authorization URL
+// Generate authorization URL
 $authData = OAuth2Canva::getAuthorizationUrl();
 
-// Lưu code_verifier và state vào session để sử dụng sau
+// Store code_verifier and state in session for later use
 session([
     'canva_code_verifier' => $authData['code_verifier'],
     'canva_state' => $authData['state'],
 ]);
 
-// Redirect user đến authorization URL
+// Redirect user to authorization URL
 return redirect($authData['url']);
 ```
 
-### Bước 2: Xử lý Callback
+### Step 2: Handle Callback
 
 ```php
 use Macoauth2canva\OAuth2Canva\Facades\OAuth2Canva;
 use Macoauth2canva\OAuth2Canva\Models\CanvaToken;
 
-// Trong route callback
+// In your callback route
 public function handleCallback(Request $request)
 {
-    // Verify state để chống CSRF
+    // Verify state to prevent CSRF attacks
     $state = $request->query('state');
     if ($state !== session('canva_state')) {
         abort(403, 'Invalid state parameter');
     }
 
-    // Lấy authorization code
+    // Get authorization code
     $code = $request->query('code');
     $codeVerifier = session('canva_code_verifier');
 
-    // Exchange code để lấy access token
+    // Exchange code for access token
     $tokenData = OAuth2Canva::exchangeCodeForToken($code, $codeVerifier);
 
-    // Lưu token vào database
+    // Save token to database
     CanvaToken::create([
         'user_id' => auth()->id(),
         'access_token' => $tokenData['access_token'],
@@ -133,26 +130,26 @@ public function handleCallback(Request $request)
         'scopes' => $request->query('scope'),
     ]);
 
-    // Xóa session data
+    // Clear session data
     session()->forget(['canva_code_verifier', 'canva_state']);
 
-    return redirect()->route('dashboard')->with('success', 'Đã kết nối với Canva thành công!');
+    return redirect()->route('dashboard')->with('success', 'Successfully connected to Canva!');
 }
 ```
 
-### Bước 3: Sử dụng Access Token để gọi API
+### Step 3: Use Access Token to Call API
 
 ```php
 use Macoauth2canva\OAuth2Canva\Facades\OAuth2Canva;
 use Macoauth2canva\OAuth2Canva\Models\CanvaToken;
 
-// Lấy token của user
+// Get user's token
 $token = CanvaToken::forUser(auth()->id())->first();
 
-// Tự động refresh nếu cần (còn < 5 phút)
+// Automatically refresh if needed (less than 5 minutes remaining)
 $accessToken = $token->getValidAccessToken();
 
-// Gọi Canva API
+// Call Canva API
 $response = OAuth2Canva::makeApiRequest(
     'GET',
     '/rest/v1/users/me',
@@ -162,31 +159,31 @@ $response = OAuth2Canva::makeApiRequest(
 $userData = $response->json();
 ```
 
-### Các methods khác
+### Additional Methods
 
 ```php
-// Introspect token để kiểm tra validity
+// Introspect token to check validity
 $tokenInfo = OAuth2Canva::introspectToken($accessToken);
 if ($tokenInfo['active']) {
-    // Token còn active
+    // Token is still active
 }
 
 // Revoke token
 OAuth2Canva::revokeToken($accessToken);
 
-// Hoặc sử dụng model method
-$token->revoke(); // Revoke và xóa khỏi database
+// Or use model method
+$token->revoke(); // Revoke and delete from database
 
-// Kiểm tra token validity
+// Check token validity
 if ($token->isValid()) {
-    // Token còn hiệu lực
+    // Token is still valid
 }
 
 if ($token->isActive()) {
-    // Token active trên server
+    // Token is active on server
 }
 
-// Generate PKCE values (nếu cần tự tạo)
+// Generate PKCE values (if you need to create them manually)
 $codeVerifier = OAuth2Canva::generateCodeVerifier();
 $codeChallenge = OAuth2Canva::generateCodeChallenge($codeVerifier);
 $state = OAuth2Canva::generateState();
@@ -196,25 +193,30 @@ $state = OAuth2Canva::generateState();
 
 ### OAuth2Canva Facade
 
-- `getAuthorizationUrl(?string $codeVerifier, ?string $state, ?string $scopes, ?string $redirectUri)`: Tạo authorization URL với PKCE
-- `exchangeCodeForToken(string $authorizationCode, string $codeVerifier, ?string $redirectUri)`: Exchange code cho token
+- `getAuthorizationUrl(?string $codeVerifier, ?string $state, ?string $scopes, ?string $redirectUri)`: Generate authorization URL with PKCE
+- `exchangeCodeForToken(string $authorizationCode, string $codeVerifier, ?string $redirectUri)`: Exchange code for token
 - `refreshAccessToken(string $refreshToken)`: Refresh access token
-- `introspectToken(string $token)`: Kiểm tra token validity trên server
+- `introspectToken(string $token)`: Check token validity on server
 - `revokeToken(string $token)`: Revoke token
-- `makeApiRequest(string $method, string $endpoint, string $accessToken, array $data = [])`: Gọi Canva API
+- `makeApiRequest(string $method, string $endpoint, string $accessToken, array $data = [])`: Make Canva API request
+- `generateCodeVerifier()`: Generate code verifier for PKCE
+- `generateCodeChallenge(string $codeVerifier)`: Generate code challenge from code verifier
+- `generateState()`: Generate state parameter for CSRF protection
 
 ### CanvaToken Model
 
-- `isValid()`: Kiểm tra token có còn hiệu lực không (dựa trên expires_at)
-- `needsRefresh()`: Kiểm tra token có cần refresh không
-- `refreshIfNeeded()`: Tự động refresh nếu cần
-- `getValidAccessToken()`: Lấy access token, tự động refresh nếu cần
-- `revoke()`: Revoke token và xóa khỏi database
-- `isActive()`: Kiểm tra token có active trên server không
+- `isValid()`: Check if token is still valid (based on expires_at)
+- `needsRefresh()`: Check if token needs to be refreshed
+- `refreshIfNeeded()`: Automatically refresh if needed
+- `getValidAccessToken()`: Get access token, automatically refresh if needed
+- `revoke()`: Revoke token and delete from database
+- `isActive()`: Check if token is active on server
 - `scopeForUser($query, string $userId)`: Query scope
-- `scopeValid($query)`: Query scope cho token còn hiệu lực
+- `scopeValid($query)`: Query scope for valid tokens
 
 ## Testing
+
+Run the test suite:
 
 ```bash
 composer test
@@ -226,11 +228,11 @@ Please see [CHANGELOG](CHANGELOG.md) for more information on what has changed re
 
 ## Contributing
 
-Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
+Contributions are welcome from the community. Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 
 ## Security Vulnerabilities
 
-Please review [our security policy](../../security/policy) on how to report security vulnerabilities.
+If you discover a security vulnerability, please send an email directly to the maintainer instead of using the issue tracker. All security vulnerabilities will be promptly addressed.
 
 ## Credits
 
@@ -239,4 +241,4 @@ Please review [our security policy](../../security/policy) on how to report secu
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see [LICENSE](LICENSE.md) for more information.
